@@ -8,10 +8,6 @@ function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function onMouseUp() {
-      boardRef?.current?.focus();
-    }
-
     function onKeyDown(ev: KeyboardEvent) {
       ev.preventDefault();
       if (ev.key.length === 1) {
@@ -28,10 +24,8 @@ function Board() {
     }
 
     boardRef?.current?.addEventListener("keydown", onKeyDown);
-    boardRef?.current?.addEventListener("mouseup", onMouseUp);
     return () => {
       boardRef?.current?.removeEventListener("keydown", onKeyDown);
-      boardRef?.current?.removeEventListener("mouseup", onMouseUp);
     };
   }, []);
 
