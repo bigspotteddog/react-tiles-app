@@ -1,3 +1,5 @@
+import "./Board.css";
+
 import { useEffect, useRef, useState } from "react";
 import Tile, { TileInterface } from "./Tile";
 

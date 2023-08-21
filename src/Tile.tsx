@@ -1,3 +1,5 @@
+import "./Tile.css";
+
 const VOWELS: string = "aeiouy";
 
 function Tile(tile: TileInterface) {
