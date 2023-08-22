@@ -8,17 +8,36 @@ function Board() {
   const boardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let append = false;
+    let current = {} as TileInterface;
+
     function onKeyDown(ev: KeyboardEvent) {
       ev.preventDefault();
       if (ev.key.length === 1) {
-        const tile = { letters: ev.key };
-        setTilesAdded((previous) => [...previous, tile]);
+        if (ev.key === "[") {
+          current = { letters: "" } as TileInterface;
+          setTilesAdded((previous) => [...previous, current]);
+          append = true;
+        } else if (ev.key === "]") {
+          append = false;
+          current = {} as TileInterface;
+        } else {
+          if (append) {
+            setTilesAdded((added) => {
+              let addTo = added.slice(0, -1);
+              current.letters += ev.key;
+              addTo.push(current);
+              return addTo;
+            });
+          } else {
+            setTilesAdded((previous) => [...previous, { letters: ev.key }]);
+          }
+        }
       } else {
         if (ev.key === "Backspace") {
           setTilesAdded((previous) => previous.slice(0, -1));
         } else if (ev.key === "Enter") {
-          const tile = { letters: ev.key };
-          setTilesAdded((previous) => [...previous, tile]);
+          setTilesAdded((previous) => [...previous, { letters: ev.key }]);
         }
       }
     }
