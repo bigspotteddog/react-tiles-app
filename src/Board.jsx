@@ -1,43 +1,16 @@
 import "./Board.css";
-import Tile from "./Tile.jsx"
+import Tile from "./Tile.jsx";
 import { useEffect, useRef, useState } from "react";
 
+let tilesAdded, setTilesAdded;
+let boardRef, tilesRef;
+
 function Board() {
-  const [tilesAdded, setTilesAdded] = useState([]);
-  const boardRef = useRef(null);
-  const tilesRef = useRef([]);
+  [tilesAdded, setTilesAdded] = useState([]);
+  boardRef = useRef(null);
+  tilesRef = useRef([]);
 
   useEffect(() => {
-    let append = false;
-    let current = {};
-
-    function onKeyDown(ev) {
-      ev.preventDefault();
-      if (ev.key.length === 1) {
-        if (ev.key === "[") {
-          current = { letters: "" };
-          setTilesAdded((previous) => [...previous, current]);
-          append = true;
-        } else if (ev.key === "]") {
-          append = false;
-          current = {};
-        } else {
-          if (append) {
-            tilesRef.current.length && tilesRef.current[tilesRef.current.length-1].addLetters(ev.key);
-          } else {
-            setTilesAdded((previous) => [...previous, { letters: ev.key }]);
-          }
-        }
-      } else {
-        if (ev.key === "Backspace") {
-          setTilesAdded((previous) => previous.slice(0, -1));
-          tilesRef.current = tilesRef.current.slice(0, -1);
-        } else if (ev.key === "Enter") {
-          setTilesAdded((previous) => [...previous, { letters: ev.key }]);
-        }
-      }
-    }
-
     boardRef?.current?.addEventListener("keydown", onKeyDown);
     return () => {
       boardRef?.current?.removeEventListener("keydown", onKeyDown);
@@ -69,11 +42,14 @@ function Board() {
                   member.height = height;
                   left += 50 + margin;
 
-                  return <Tile
-                    key={i}
-                    ref={el => tilesRef.current[i] = el}
-                    {...member}></Tile>;
-                  }
+                  return (
+                    <Tile
+                      key={i}
+                      ref={(el) => (tilesRef.current[i] = el)}
+                      {...member}
+                    ></Tile>
+                  );
+                }
               })}
             </div>
           </div>
@@ -84,3 +60,34 @@ function Board() {
 }
 
 export default Board;
+
+let append = false;
+let current = {};
+
+function onKeyDown(ev) {
+  ev.preventDefault();
+  if (ev.key.length === 1) {
+    if (ev.key === "[") {
+      current = { letters: "" };
+      setTilesAdded((previous) => [...previous, current]);
+      append = true;
+    } else if (ev.key === "]") {
+      append = false;
+      current = {};
+    } else {
+      if (append) {
+        tilesRef.current.length &&
+          tilesRef.current[tilesRef.current.length - 1].addLetters(ev.key);
+      } else {
+        setTilesAdded((previous) => [...previous, { letters: ev.key }]);
+      }
+    }
+  } else {
+    if (ev.key === "Backspace") {
+      setTilesAdded((previous) => previous.slice(0, -1));
+      tilesRef.current = tilesRef.current.slice(0, -1);
+    } else if (ev.key === "Enter") {
+      setTilesAdded((previous) => [...previous, { letters: ev.key }]);
+    }
+  }
+}
