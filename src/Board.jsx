@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from "react";
 let tilesAdded, setTilesAdded;
 let boardRef, tilesRef;
 
+let append = false;
+let current = {};
+
 function Board() {
   [tilesAdded, setTilesAdded] = useState([]);
   boardRef = useRef(null);
@@ -60,9 +63,6 @@ function Board() {
 }
 
 export default Board;
-
-let append = false;
-let current = {};
 
 function onKeyDown(ev) {
   ev.preventDefault();
