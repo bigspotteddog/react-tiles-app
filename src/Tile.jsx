@@ -2,8 +2,6 @@ import { useState, forwardRef, useImperativeHandle } from "react";
 import "./Tile.css";
 
 const VOWELS = "aeiouy";
-// let letters;
-// let setLetters;
 
 const Tile = forwardRef(function Tile(props, ref) {
   const [letters, setLetters] = useState(props.letters);
@@ -12,11 +10,11 @@ const Tile = forwardRef(function Tile(props, ref) {
     addLetters: addLetters,
   }));
 
-  function addLetters(letters) {
+  const addLetters = function (letters) {
     setLetters((previous) => {
       return previous + letters;
     });
-  }
+  };
 
   const getTextWidth = function (text, font) {
     var canvas =
