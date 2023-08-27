@@ -31,6 +31,7 @@ function Board() {
       } else {
         if (ev.key === "Backspace") {
           setTilesAdded((previous) => previous.slice(0, -1));
+          tilesRef.current = tilesRef.current.slice(0, -1);
         } else if (ev.key === "Enter") {
           setTilesAdded((previous) => [...previous, { letters: ev.key }]);
         }
