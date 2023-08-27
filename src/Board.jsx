@@ -1,34 +1,29 @@
 import "./Board.css";
-
+import Tile from "./Tile.jsx"
 import { useEffect, useRef, useState } from "react";
-import Tile, { TileInterface } from "./Tile";
 
 function Board() {
-  const [tilesAdded, setTilesAdded] = useState<TileInterface[]>([]);
-  const boardRef = useRef<HTMLDivElement>(null);
+  const [tilesAdded, setTilesAdded] = useState([]);
+  const boardRef = useRef(null);
+  const tilesRef = useRef([]);
 
   useEffect(() => {
     let append = false;
-    let current = {} as TileInterface;
+    let current = {};
 
-    function onKeyDown(ev: KeyboardEvent) {
+    function onKeyDown(ev) {
       ev.preventDefault();
       if (ev.key.length === 1) {
         if (ev.key === "[") {
-          current = { letters: "" } as TileInterface;
+          current = { letters: "" };
           setTilesAdded((previous) => [...previous, current]);
           append = true;
         } else if (ev.key === "]") {
           append = false;
-          current = {} as TileInterface;
+          current = {};
         } else {
           if (append) {
-            setTilesAdded((added) => {
-              let addTo = added.slice(0, -1);
-              current.letters += ev.key;
-              addTo.push(current);
-              return addTo;
-            });
+            tilesRef.current.length && tilesRef.current[tilesRef.current.length-1].addLetters(ev.key);
           } else {
             setTilesAdded((previous) => [...previous, { letters: ev.key }]);
           }
@@ -58,7 +53,7 @@ function Board() {
         <div className="row">
           <div className="col-sm-12">
             <div ref={boardRef} className="board" tabIndex={0}>
-              {tilesAdded.map((member) => {
+              {tilesAdded.map((member, i) => {
                 if (member.letters === "Enter") {
                   left = 0;
                   top += 50 + margin;
@@ -68,8 +63,12 @@ function Board() {
                   member.left = left;
                   member.top = top;
                   left += 50 + margin;
-                  return <Tile {...member}></Tile>;
-                }
+
+                  return <Tile
+                    key={i}
+                    ref={el => tilesRef.current[i] = el}
+                    {...member}></Tile>;
+                  }
               })}
             </div>
           </div>
