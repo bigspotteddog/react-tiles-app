@@ -46,6 +46,8 @@ function Board() {
 
   let left = 0;
   let top = 0;
+  let width = 50;
+  let height = 50;
   const margin = 4;
 
   return (
@@ -63,6 +65,8 @@ function Board() {
                 } else {
                   member.left = left;
                   member.top = top;
+                  member.width = width;
+                  member.height = height;
                   left += 50 + margin;
 
                   return <Tile
