@@ -1,5 +1,6 @@
 import "./Board.css";
 import Tile from "./Tile.jsx";
+import Cursor from "./Cursor.jsx";
 import { useEffect, useRef, useState } from "react";
 
 let tilesAdded, setTilesAdded;
@@ -8,7 +9,7 @@ let boardRef, tilesRef;
 let append = false;
 let current = {};
 
-function Board() {
+const Board = function () {
   [tilesAdded, setTilesAdded] = useState([]);
   boardRef = useRef(null);
   tilesRef = useRef([]);
@@ -35,15 +36,15 @@ function Board() {
               {tilesAdded.map((member, i) => {
                 if (member.letters === "Enter") {
                   left = 0;
-                  top += 50 + margin;
+                  top += height + margin;
                 } else if (member.letters === " ") {
-                  left += 50 + margin;
+                  left += width + margin;
                 } else {
                   member.left = left;
                   member.top = top;
                   member.width = width;
                   member.height = height;
-                  left += 50 + margin;
+                  left += width + margin;
 
                   return (
                     <Tile
@@ -54,17 +55,18 @@ function Board() {
                   );
                 }
               })}
+              <Cursor top={top + margin} left={left + 2}></Cursor>
             </div>
           </div>
         </div>
       </div>
     </>
   );
-}
+};
 
 export default Board;
 
-function onKeyDown(ev) {
+const onKeyDown = function (ev) {
   ev.preventDefault();
   if (ev.key.length === 1) {
     if (ev.key === "[") {
@@ -90,4 +92,4 @@ function onKeyDown(ev) {
       setTilesAdded((previous) => [...previous, { letters: ev.key }]);
     }
   }
-}
+};
