@@ -43,7 +43,7 @@ const Board = function () {
               tabIndex={0}
               onPointerMove={(ev) => {
                 if (ev.buttons === 1) {
-                  if (tiles && moveRef.current) {
+                  if (tiles && moveRef.current?.getAttribute("data-id")) {
                     const id = +moveRef.current.getAttribute("data-id");
                     const x = ev.clientX - (boardLeft + tiles[id].left);
                     const y = ev.clientY - (boardTop + tiles[id].top);
