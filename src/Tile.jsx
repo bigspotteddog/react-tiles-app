@@ -22,12 +22,14 @@ const Tile = forwardRef(function Tile(props, ref) {
     <>
       <div
         ref={ref}
+        data-id={props.id}
         className={classes}
         style={{
           left: props.left,
           top: props.top,
           width: props.width,
           height: props.height,
+          transform: `translate(${props.position?.x}px, ${props.position?.y}px)`,
         }}
       >
         <div

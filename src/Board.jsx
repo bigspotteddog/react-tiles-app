@@ -13,6 +13,7 @@ const Board = function () {
   [tilesAdded, setTilesAdded] = useState([]);
   boardRef = useRef(null);
   tilesRef = useRef([]);
+  const [moveId, setMoveId] = useState(null);
 
   useEffect(() => {
     boardRef?.current?.addEventListener("keydown", onKeyDown);
@@ -32,8 +33,36 @@ const Board = function () {
       <div className="container">
         <div className="row">
           <div className="col-sm-12">
-            <div ref={boardRef} className="board" tabIndex={0}>
+            <div
+              ref={boardRef}
+              className="board"
+              tabIndex={0}
+              onPointerMove={(ev) => {
+                if (ev.buttons === 1) {
+                  if (moveId >= 0) {
+                    const positions = tilesAdded.slice();
+                    positions[moveId].position = {
+                      x: ev.clientX,
+                      y: ev.clientY,
+                    };
+                    setTilesAdded(positions);
+                  }
+                }
+              }}
+              onPointerDown={(ev) => {
+                const id = +ev.target.getAttribute("data-id");
+                if (id >= 0) {
+                  setMoveId(id);
+                }
+              }}
+              onPointerUp={(ev) => {
+                if (moveId) {
+                  setMoveId(null);
+                }
+              }}
+            >
               {tilesAdded.map((member, i) => {
+                member.id = i;
                 if (member.letters === "Enter") {
                   left = 0;
                   top += height + margin;
