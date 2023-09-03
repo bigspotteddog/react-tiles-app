@@ -3,17 +3,21 @@ import Tile from "./Tile.jsx";
 import Cursor from "./Cursor.jsx";
 import { useEffect, useRef, useState } from "react";
 
-let tilesAdded, setTilesAdded;
-let boardRef, tilesRef;
+let tiles, setTiles, translate, setTranslate;
+let boardRef, tilesRef, moveRef;
 
 let append = false;
 let current = {};
 
 const Board = function () {
-  [tilesAdded, setTilesAdded] = useState([]);
+  [tiles, setTiles] = useState([]);
   boardRef = useRef(null);
   tilesRef = useRef([]);
-  const [moveId, setMoveId] = useState(null);
+  moveRef = useRef(null);
+  [translate, setTranslate] = useState([]);
+
+  const boardLeft = boardRef.current?.getBoundingClientRect().left;
+  const boardTop = boardRef.current?.getBoundingClientRect().top;
 
   useEffect(() => {
     boardRef?.current?.addEventListener("keydown", onKeyDown);
@@ -39,29 +43,29 @@ const Board = function () {
               tabIndex={0}
               onPointerMove={(ev) => {
                 if (ev.buttons === 1) {
-                  if (moveId >= 0) {
-                    const positions = tilesAdded.slice();
-                    positions[moveId].position = {
-                      x: ev.clientX,
-                      y: ev.clientY,
-                    };
-                    setTilesAdded(positions);
+                  if (tiles && moveRef.current) {
+                    const id = +moveRef.current.getAttribute("data-id");
+                    const x = ev.clientX - (boardLeft + tiles[id].left);
+                    const y = ev.clientY - (boardTop + tiles[id].top);
+
+                    setTranslate((t) => {
+                      const copy = t.splice();
+                      copy[id] = { x: x, y: y };
+                      return copy;
+                    });
                   }
                 }
               }}
               onPointerDown={(ev) => {
-                const id = +ev.target.getAttribute("data-id");
-                if (id >= 0) {
-                  setMoveId(id);
-                }
+                moveRef.current = ev.target;
               }}
               onPointerUp={(ev) => {
-                if (moveId) {
-                  setMoveId(null);
+                if (moveRef.current) {
+                  moveRef.current = null;
                 }
               }}
             >
-              {tilesAdded.map((member, i) => {
+              {tiles.map((member, i) => {
                 member.id = i;
                 if (member.letters === "Enter") {
                   left = 0;
@@ -75,11 +79,14 @@ const Board = function () {
                   member.height = height;
                   left += width + margin;
 
+                  console.log(member);
+
                   return (
                     <Tile
                       key={i}
                       ref={(el) => (tilesRef.current[i] = el)}
                       {...member}
+                      translate={translate[i]}
                     ></Tile>
                   );
                 }
@@ -100,7 +107,7 @@ const onKeyDown = function (ev) {
   if (ev.key.length === 1) {
     if (ev.key === "[") {
       current = { letters: "" };
-      setTilesAdded((previous) => [...previous, current]);
+      setTiles((previous) => [...previous, current]);
       append = true;
     } else if (ev.key === "]") {
       append = false;
@@ -110,15 +117,15 @@ const onKeyDown = function (ev) {
         tilesRef.current.length &&
           tilesRef.current[tilesRef.current.length - 1].addLetters(ev.key);
       } else {
-        setTilesAdded((previous) => [...previous, { letters: ev.key }]);
+        setTiles((previous) => [...previous, { letters: ev.key }]);
       }
     }
   } else {
     if (ev.key === "Backspace") {
-      setTilesAdded((previous) => previous.slice(0, -1));
+      setTiles((previous) => previous.slice(0, -1));
       tilesRef.current = tilesRef.current.slice(0, -1);
     } else if (ev.key === "Enter") {
-      setTilesAdded((previous) => [...previous, { letters: ev.key }]);
+      setTiles((previous) => [...previous, { letters: ev.key }]);
     }
   }
 };
