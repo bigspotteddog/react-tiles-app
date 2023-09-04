@@ -48,16 +48,21 @@ const Board = function () {
                     moveRef.current?.target.getAttribute("data-id")
                   ) {
                     const id = +moveRef.current.target.getAttribute("data-id");
-                    const x =
+                    let x =
                       ev.clientX -
                       (boardLeft + tiles[id].left) +
                       moveRef.current.offsetX -
                       5;
-                    const y =
+
+                    x = x - (x % 3);
+
+                    let y =
                       ev.clientY -
                       (boardTop + tiles[id].top) +
                       moveRef.current.offsetY -
                       5;
+
+                    y = y - (y % 3);
 
                     setTranslate((t) => {
                       const copy = t.splice();
@@ -68,17 +73,13 @@ const Board = function () {
                 }
               }}
               onPointerDown={(ev) => {
-                let target = ev.target;
-                if (target.className === "tile-content") {
-                  target = target.parentElement;
-                }
+                let target = getTarget(ev);
                 const targetRect = target.getBoundingClientRect();
                 const targetX = targetRect.left;
                 const targetY = targetRect.top;
                 const offsetX = targetX - ev.clientX;
                 const offsetY = targetY - ev.clientY;
 
-                console.log(`offset x: ${offsetX}, y: ${offsetY}`);
                 moveRef.current = {
                   target: target,
                   offsetX: offsetX,
@@ -153,3 +154,11 @@ const onKeyDown = function (ev) {
     }
   }
 };
+
+function getTarget(ev) {
+  let target = ev.target;
+  if (target.className === "tile-content") {
+    target = target.parentElement;
+  }
+  return target;
+}
