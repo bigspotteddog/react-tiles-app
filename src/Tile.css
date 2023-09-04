@@ -22,7 +22,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fac695', endColorstr='#ef8d31', GradientType=0);
 }
 
-.tile .content {
+.tile-content {
   position: relative;
   top: 50%;
   transform: translateY(-50%);

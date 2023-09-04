@@ -43,10 +43,21 @@ const Board = function () {
               tabIndex={0}
               onPointerMove={(ev) => {
                 if (ev.buttons === 1) {
-                  if (tiles && moveRef.current?.getAttribute("data-id")) {
-                    const id = +moveRef.current.getAttribute("data-id");
-                    const x = ev.clientX - (boardLeft + tiles[id].left);
-                    const y = ev.clientY - (boardTop + tiles[id].top);
+                  if (
+                    tiles &&
+                    moveRef.current?.target.getAttribute("data-id")
+                  ) {
+                    const id = +moveRef.current.target.getAttribute("data-id");
+                    const x =
+                      ev.clientX -
+                      (boardLeft + tiles[id].left) +
+                      moveRef.current.offsetX -
+                      5;
+                    const y =
+                      ev.clientY -
+                      (boardTop + tiles[id].top) +
+                      moveRef.current.offsetY -
+                      5;
 
                     setTranslate((t) => {
                       const copy = t.splice();
@@ -57,7 +68,22 @@ const Board = function () {
                 }
               }}
               onPointerDown={(ev) => {
-                moveRef.current = ev.target;
+                let target = ev.target;
+                if (target.className === "tile-content") {
+                  target = target.parentElement;
+                }
+                const targetRect = target.getBoundingClientRect();
+                const targetX = targetRect.left;
+                const targetY = targetRect.top;
+                const offsetX = targetX - ev.clientX;
+                const offsetY = targetY - ev.clientY;
+
+                console.log(`offset x: ${offsetX}, y: ${offsetY}`);
+                moveRef.current = {
+                  target: target,
+                  offsetX: offsetX,
+                  offsetY: offsetY,
+                };
               }}
               onPointerUp={(ev) => {
                 if (moveRef.current) {
@@ -78,8 +104,6 @@ const Board = function () {
                   member.width = width;
                   member.height = height;
                   left += width + margin;
-
-                  console.log(member);
 
                   return (
                     <Tile

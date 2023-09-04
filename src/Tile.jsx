@@ -35,7 +35,7 @@ const Tile = forwardRef(function Tile(props, ref) {
         }}
       >
         <div
-          className="content"
+          className="tile-content"
           style={{ fontSize: getFontSize(props.width, letters) }}
         >
           {letters}
